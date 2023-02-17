@@ -1,0 +1,6 @@
+{
+    "name": "Markdown Editor based Zenn CLI",
+    "build": {
+        "dockerfile": "Dockerfile"
+    }
+}
