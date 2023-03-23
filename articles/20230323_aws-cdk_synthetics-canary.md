@@ -186,8 +186,6 @@ class Canary(Construct):
             artifact_s3_location=f"s3://{result_bucket.bucket_name}",
             code=synthetics.CfnCanary.CodeProperty(
                 handler="index.handler",
-                # s3_bucket=sourcecode_bucket,
-                # s3_key=f"{canary_name}/index.py",
                 script=src_code,
             ),
             execution_role_arn=syn_role.attr_arn,
@@ -297,4 +295,4 @@ https://docs.aws.amazon.com/ja_jp/cdk/v2/guide/identifiers.html
 
 `cdk deploy`のプロセスではCloudFormationテンプレートを生成しているため、型チェックや命名規則などの巨大なバリデーションが最初に実行されています。そのためか、デプロイが実際に動き始めるとコンパイルが成功したときのような安心感を得られるので、プログラマフレンドリーなIaCツールなのは確かです。
 
-次はCDKのバリデーション実装で使い勝手の良いものを試していきたいです。
+次はCDKのバリデーション実装を試して使い勝手の良さを検証したいところです。
