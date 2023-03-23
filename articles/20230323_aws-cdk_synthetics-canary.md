@@ -276,9 +276,10 @@ class Alarm(Construct):
 
 ### Invalid bucket name "...-${Token[AWS.AccountId.7]}": Bucket name must match the regex ..."
 
+CDK仕様とS3サービス仕様が競合している例。
+
 https://docs.aws.amazon.com/ja_jp/cdk/v2/guide/tokens.html
 
-CDK仕様とS3サービス仕様が競合している例。
 トークンはデプロイ実行後に展開されるため、`cdk deploy`のビルドプロセスでは上記エラーが発生してしまう。今回はboto3の`get_caller_identity()`を使ってスルーした。
 
 
