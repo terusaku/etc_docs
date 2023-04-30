@@ -7,7 +7,7 @@ WORKDIR /work
 # WORKDIR /home/node/zenn
 # USER node
 
-RUN npm init --yes && npm install zenn-cli
+RUN npm install zenn-cli@latest
     # apt-get update && \
     # apt-get install -y git && \
     
