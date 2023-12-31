@@ -2,7 +2,7 @@
 title: "GitHub IssuesのOSS振り返り"
 emoji: "🔖"
 type: "tech" # tech: 技術記事 / idea: アイデア
-topics: ["aws", "github"]
+topics: ["aws", "github", "aws-cdk", "localstack", "datadog"]
 published: true
 published_at: 2023-12-31 18:00
 ---
