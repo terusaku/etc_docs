@@ -1,0 +1,10 @@
+{
+    "name": "Markdown Editor based Zenn CLI",
+    "build": {
+        "dockerfile": "Dockerfile",
+    },
+    "remoteUser": "node",
+    "customizations": {
+        "vscode": {}
+    }
+}
