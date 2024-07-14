@@ -8,8 +8,8 @@ FROM mcr.microsoft.com/devcontainers/javascript-node:18-bullseye
 # WORKDIR /home/node/zenn
 # USER node
 
-# RUN npm install zenn-cli@latest &&\
-#     apt-get update && \
-#     apt-get install -y git
+RUN npm install zenn-cli@latest &&\
+    apt-get update && \
+    apt-get install -y git
 
 # VOLUME [ "/data" ]
