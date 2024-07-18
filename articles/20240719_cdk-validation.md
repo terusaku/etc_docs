@@ -19,11 +19,11 @@ https://aws.amazon.com/jp/blogs/news/align-with-best-practices-while-creating-in
 https://dev.to/aws-builders/validation-with-aws-cdk-addvalidation-20lo
 
 
-`Aspects`は「特定のAWSリソース全てを検証したい場合」、`validate()`は「[Token](https://docs.aws.amazon.com/cdk/v2/guide/tokens.html)に基づくような動的な参照値を含む設定を検証したい場合」、として使い分けた。
+`Aspects`は「特定のAWSリソース全てを検証したい場合」、`validate()`は「[Token](https://docs.aws.amazon.com/cdk/v2/guide/tokens.html)に基づくような動的な参照値を含む設定を検証したい場合」、として使い分けています。
 
 ## Aspectsを使ったバリデーション
 https://docs.aws.amazon.com/ja_jp/securityhub/latest/userguide/rds-controls.html#rds-7
-あるCDKスタック内のRDSクラスタが全て削除保護が有効化されているかを検証します。特に削除保護は本番環境で必須としておきたいところなので、aws-cdkではそのような実装も簡単に対応できます。
+あるCDKスタック内のRDSクラスタが全て削除保護が有効化されているか、の検証です。削除保護は本番環境では必須としておきたいところですが、「本番環境のみバリデーションを有効にする」ことはaws-cdkでは簡単に対応できます。
 
 - CDKスタックに対するAspects適用例
 ```ts
@@ -60,14 +60,16 @@ export class RdsDeleteProtectionAspect implements IAspect {
 
 `deletionProtection`のように0/1で検証可能なものは`Aspects`に向いている。
 
-対象のCDKスタックで複数のRDSクラスタを作成していても、RDSクラスタ毎にバリデーションが実行されるため、エラー発生時もどのCDKリソースが原因かは判別できる。
+対象のCDKスタックで複数のRDSクラスタを作成していても、RDSクラスタ毎にバリデーションが実行されるため、エラー発生時もどのCDKリソースが原因かは判別できました。
 
 
 ## validate()を使ったバリデーション
 https://docs.aws.amazon.com/ja_jp/securityhub/latest/userguide/rds-controls.html#rds-11
-RDSクラスタ作成時、自動バックアップ期間が7日以上で設定しているかを検証します。こういった設定は本番・テストなどで環境差異がある前提として、バリデーションを作りました。
+RDSクラスタ作成時、自動バックアップ期間が7日以上で設定しているか、の検証です。本番・テストなど環境差異によって検証したい値は変わる前提として、バリデーションを作りました。
 
 ```ts
+import { clusterProps } from '@/types/common-context';
+
 // RDSクラスタ作成クラス例
 class HopRdsCluster extends Construct {
   public readonly endpoint: rds.Endpoint;
@@ -77,7 +79,7 @@ class HopRdsCluster extends Construct {
     super(scope, id);
 
     const {
-      // クラスタパラメータ色々、`export interface`しているもの
+      // クラスタパラメータ色々
     } = props;
 
     this.node.addValidation(
@@ -95,7 +97,6 @@ import { IValidation } from 'constructs';
 
 import { clusterProps } from '@/types/common-context';
 import { RdsBackupValidator } from '@/lib/validators/rds-validators';
-
 
 export class RdsBackupValidator implements IValidation {
   constructor(private readonly props: clusterProps) {}
@@ -118,7 +119,7 @@ export class RdsBackupValidator implements IValidation {
 }
 ```
 
-上記では評価基準のRetentionをハードコードしているが、「本番環境なら7日以上、それ以外の環境だったら1日以上」としている。もし設定が無効な場合は`undefined`なので、CDKのバリデーションとしてはその考慮も必要になってます。
+上記では評価基準のRetentionをハードコードしているが、「本番環境なら7日以上、それ以外の環境だったら1日以上」としている。もし自動バックアップ設定が無効な場合は`undefined`なので、CDKのバリデーションとしてはその考慮も必要です。
 
 Aspects同様、RDSクラスタ毎にバリデーションが実行され、エラー発生時にはどのCDKリソースが失敗しているか判別できる。
 
