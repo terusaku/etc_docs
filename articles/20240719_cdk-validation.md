@@ -29,7 +29,7 @@ https://docs.aws.amazon.com/ja_jp/securityhub/latest/userguide/rds-controls.html
 ```ts
 const rdsStack = new RdsStack(
   app,
-  'HopRdsStack',
+  'RdsStack',
   context,
   stackProps,
 );
@@ -71,7 +71,7 @@ RDSクラスタ作成時、自動バックアップ期間が7日以上で設定�
 import { clusterProps } from '@/types/common-context';
 
 // RDSクラスタ作成クラス例
-class HopRdsCluster extends Construct {
+class RdsCluster extends Construct {
   public readonly endpoint: rds.Endpoint;
   public readonly cluster: rds.IDatabaseCluster;
 
