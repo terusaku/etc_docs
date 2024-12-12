@@ -3,7 +3,8 @@ title: "EventBridgeからmarkdown形式でChatbot通知するCDKスタック"
 emoji: "🐙"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["aws", "awscdk", "CICD", "eventbridge", "chatbot"]
-published_at: 2024-12-13 8:00
+published: true
+published_at: 2024-12-13 08:00
 ---
 
 CloudWatch EventsからEventBridgeに名前が変わったのは2019年（さっき調べました）。
