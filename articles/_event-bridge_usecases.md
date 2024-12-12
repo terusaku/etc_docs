@@ -65,6 +65,8 @@ https://docs.aws.amazon.com/ja_jp/chatbot/latest/adminguide/custom-content.html
         ))
 ```
 
+コードでは省略していますが`description`に`@here`を含めたら、メンション扱いになるので便利です。
+
 ### Slack通知例
 ![](/images/events_chatbot.png)
 
