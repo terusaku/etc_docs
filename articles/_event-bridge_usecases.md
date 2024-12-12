@@ -73,7 +73,7 @@ https://docs.aws.amazon.com/ja_jp/chatbot/latest/adminguide/custom-content.html
 以前から「inputTransformerのパターンをサポートしたL2コンストラクが欲しい」というissueはあるものの、ドキュメントで補足する程度で決着しそうでした。
 https://github.com/aws/aws-cdk/issues/11210
 
-2024/12現在、[EventBridge targets](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-targets.html)に記載されたAWSサービスは30個ですが、[AWS services that generate events](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-service-event-list.html)は数える気が起きないくらい膨大になっています。。
+2024/12現在、[EventBridge targets](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-targets.html)に記載されたAWSサービスは30個ですが、[AWS services that send events to EventBridge](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-service-event.html)は数える気が起きないくらい膨大になっています。。
 
 AWSパートナーのSaaSからもイベント受信したり(*1)、Pipes機能でターゲットへのイベント送信時にデータ補完したり、Scheduler機能でAWS APIを直接実行したり(*2)、、ユースケースは大量に用意されているので、それらを効果的に使う実装を考える必要性は高くなったと再認識しました。
 
