@@ -24,11 +24,12 @@ Powered by https://pypi.org/project/aws-pdk/
 
 今回の場合、[RuleTargetInput](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_events.RuleTargetInput.html)を使うことになり、markdown形式では`static fromObject(obj)`が必要になっています。
 
-そのインターフェイスがドキュメント不足で迷いましたが・・出来たものはこちら。（抜粋）
-`from_object`の中身は、下記ページあたりが何とか参考になりました。
 https://docs.aws.amazon.com/chatbot/latest/adminguide/custom-notifs.html
 https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-transform-input-rule.html
 https://docs.aws.amazon.com/ja_jp/chatbot/latest/adminguide/custom-content.html
+
+そのインターフェイスがドキュメント不足で迷いましたが・・出来たものはこちら。（抜粋）
+`from_object`の中身は、上記ページあたりが何とか参考になりました。
 
 ```python
         # event rule at Console Login
