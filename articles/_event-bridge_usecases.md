@@ -13,7 +13,7 @@ CloudWatch EventsからEventBridgeに名前が変わったのは2019年（さっ
 ## 今回作ったもの
 左側に表示されているスタックが今回作った部分です。（右側は機会があれば別途...）
 Powered by https://pypi.org/project/aws-pdk/
-![](/images/cdk_graph_noFilter.svg)
+![](/images/cdk_graph_noFilter.png)
 
 
 ## 任意のイベントをEventBridgeでトリガーする
