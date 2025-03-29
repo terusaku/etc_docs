@@ -127,9 +127,9 @@ def select_top_k_by_task(task_type: str) -> int:
 
 
 
-## 今後の改善案
+## 今後の改善メモ
 
-### マルチモーダル対応
+### マルチモーダル対応？
 
 現状はテキストのみ処理していますが、個人的には動画にも対応できたらキャッチアップの幅が広がって良さそう、という考えです。
 LLMに動画を渡してもそのまま処理できる訳はないので、AWSで言う[Rekognition Video](https://aws.amazon.com/rekognition/video-features/)のような機能と組み合わせないと無理、というところです。
