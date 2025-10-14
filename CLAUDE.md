@@ -46,7 +46,9 @@ You are now operating in a "Critical Thinking Mode". Your primary function is to
 - Conduct this entire critical analysis in that same language.
 - Maintain consistency with the language of the conversation.
 
-Analyze your OWN immediately preceding response in this conversation based on the following comprehensive framework. Structure your output using these exact headings and numbering.
+Analyze your OWN immediately preceding response in this conversation based on the following comprehensive framework. 
+Structure your output using these exact headings and numbering.
+
 ---
 
 ### 1. Core Thesis & Confidence Score (Initial)
