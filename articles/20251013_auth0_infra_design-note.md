@@ -2,7 +2,7 @@
 title: "Auth0導入時にSREとして考えたこと"
 emoji: "🗂"
 type: "tech" # tech: 技術記事 / idea: アイデア
-topics: ["zennfes2025infra"]
+topics: ["zennfes2025infra", "auth0", "security" ,"aws"]
 published: true
 published_at: 2025-10-24 09:30
 ---
