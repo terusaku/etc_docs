@@ -1,10 +1,10 @@
 ---
-title: "統計学の概念とDatadog機能のマッピング完全ガイド"
+title: "統計学の基本からDatadogのモニタリング機能を理解する"
 emoji: "📊"
 type: "tech"
 topics: ["datadog", "observability", "statistics", "monitoring", "sre"]
 published: true
-published_at: 2025-11-10  07:00
+published_at: 2025-11-10 07:00
 ---
 
 Observabilityを理解するため、目先としてはDatadogを使いこなすため、統計学の基礎知識を振り返りつつ、Datadogの各機能に触れます。
@@ -21,7 +21,6 @@ Datadogの使い方を具体的に知りたい人には役立たないので、�
 
 Datadogで扱うデータを理解するために、これから統計学における「尺度」を使って分類してます。
 
-
 ### 尺度の種類
 | 尺度分類 | 特徴 | Observabilityでの例 | 代表的な統計量 |
 |----------|------|---------------------|----------------|
@@ -30,11 +29,11 @@ Datadogで扱うデータを理解するために、これから統計学にお�
 | **順序尺度** | 順序関係のみ意味を持つ | ログレベル(DEBUG < INFO < WARN < ERROR) | ヒストグラム |
 | **名義尺度** | カテゴリや名前 | 環境名(prod/staging)、サービス名、HTTPステータスコード | カウント |
 
-*1: 温度や西暦など代表例で、Observabilityには関係が薄いので割愛。
+*1: 温度や西暦は代表例だが、Observabilityには関係が薄いので割愛。
 
 ---
 
-## Datadogにおける代表的な監視対象とマッピング
+## Datadogにおける代表的な監視対象と尺度分類
 
 | Datadog機能 | モニタ対象 | 尺度分類 | 監視条件(例) |
 |------------|------------|------------|------------|
@@ -92,8 +91,24 @@ avg:system.cpu.user{*}.rollup(avg, 600) > 80
 ```
 
 ![](/images/datadog_rollup(min,1800).png)
-*rollupあり*
+*rollupあり(極端な比較例として、これは30分間ロールアップ)*
 
+### 非構造化ログのパース
+**❌ 避けるべき**:
+- ログメッセージを部分一致させて監視条件としてカウント
+   - 順序尺度がフィールドになく、ログメッセージに直接含まれているような状態
+
+**✅ 推奨**:
+- Datadogのログパーサーを活用して、構造化ログを生成
+   - (アプリのロガーでDatadog仕様のJSONログを出力することが理想的)
+- アプリ依存のカウント数や処理時間を抽出して、比尺度や順序尺度として扱える
+   - ex.) [Parsing](https://docs.datadoghq.com/logs/log_configuration/parsing/?tab=matchers)
+- とあるログパーサ例
+```sh
+rule \[%{date("yyyy-MM-dd HH:mm:ss,SSS"):timestamp}\: %{word:log_status}\/%{data:process_name}\] %{data:message} company_id=%{data:company_id}, xxx数=%{integer:execution.result_count}件, yyy時間=%{number:execution.duration_second}秒 
+```
+![](/images/datadog_logs_parsed_perf.png)
+*x軸: 処理件数, y軸: 1件あたり処理時間*
 
 ### カーディナリティの管理
 
@@ -120,5 +135,5 @@ avg:system.cpu.user{*}.rollup(avg, 600) > 80
 ## リファレンス
 - [Logs vs Metrics vs Traces - Microsoft Engineering Playbook](https://microsoft.github.io/code-with-engineering-playbook/observability/log-vs-metric-vs-trace/)
 - [Datadog公式ドキュメント - 関数一覧](https://docs.datadoghq.com/ja/dashboards/functions/)
+- [Datadog公式ドキュメント - ログパース](https://docs.datadoghq.com/ja/logs/log_configuration/parsing/)
 - [Metrics Without Limits](https://docs.datadoghq.com/ja/metrics/metrics-without-limits/)
-- [Understanding Data Types and Scales of Measurement - Statistics Solutions](https://www.statisticssolutions.com/understanding-data-types-and-scales-of-measurement/)
