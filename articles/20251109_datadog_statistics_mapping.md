@@ -133,7 +133,8 @@ rule \[%{date("yyyy-MM-dd HH:mm:ss,SSS"):timestamp}\: %{word:log_status}\/%{data
 - 名義尺度（カテゴリデータ）: 分類、グループ化、フィルタリングの条件として使う
 
 ## リファレンス
-- [Logs vs Metrics vs Traces - Microsoft Engineering Playbook](https://microsoft.github.io/code-with-engineering-playbook/observability/log-vs-metric-vs-trace/)
-- [Datadog公式ドキュメント - 関数一覧](https://docs.datadoghq.com/ja/dashboards/functions/)
-- [Datadog公式ドキュメント - ログパース](https://docs.datadoghq.com/ja/logs/log_configuration/parsing/)
-- [Metrics Without Limits](https://docs.datadoghq.com/ja/metrics/metrics-without-limits/)
+https://microsoft.github.io/code-with-engineering-playbook/observability/log-vs-metric-vs-trace/
+https://docs.datadoghq.com/ja/dashboards/functions/
+https://docs.datadoghq.com/ja/logs/log_configuration/parsing/
+https://docs.datadoghq.com/ja/metrics/metrics-without-limits/
+
