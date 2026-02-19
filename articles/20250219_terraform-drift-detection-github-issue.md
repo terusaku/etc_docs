@@ -4,7 +4,7 @@ emoji: "🔍"
 type: "tech"
 topics: ["terraform", "githubactions", "aws", "sre", "iac"]
 published: true
-published_at: 2026-02-19 22:00
+published_at: 2026-02-19 22:30
 ---
 
 ## はじめに
@@ -283,7 +283,7 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.TF_VERSION }}
-          terraform_wrapper: false  # JSON出力のため
+          terraform_wrapper: false  # 終了コードを正しく取得するため
 
       # - name: Terraform Format Check
       #   id: fmt
@@ -324,7 +324,7 @@ jobs:
           TITLE="[${{ inputs.environment }}] Terraform Drift Detected (tf-state-serial@${STATE_SERIAL})"
 
           # 同一タイトルの open issue が存在する場合はスキップ
-          if gh issue list --state open --label "terraform-drift" --limit 100 --json title \
+          if gh issue list --state open --label "terraform-drift" --limit 10 --json title \
             | jq -e --arg t "${TITLE}" '[.[] | select(.title == $t)] | length > 0' > /dev/null 2>&1; then
             echo "Issue already exists: ${TITLE} — skipping"
             exit 0
@@ -349,51 +349,8 @@ jobs:
             --body-file issue_body.md \
             --label "terraform-drift"
 ```
-
-## Step 3: ドリフト検知時のIssue自動作成
-
-### 実装
-
-```yaml
-- name: Create issue when drift
-  id: drift
-  if: steps.plan.outputs.exitcode == '2'
-  working-directory: ${{ env.TF_WORKING_DIR }}
-  env:
-    GH_TOKEN: ${{ github.token }}
-  run: |
-    STATE_SERIAL=$(terraform state pull | jq -r '.serial')
-    TITLE="[${{ inputs.environment }}] Terraform Drift Detected (tf-state-serial@${STATE_SERIAL})"
-
-    # 同一タイトルの open issue が存在する場合はスキップ
-    if gh issue list --state open --label "terraform-drift" --limit 100 --json title \
-      | jq -e --arg t "${TITLE}" '[.[] | select(.title == $t)] | length > 0' > /dev/null 2>&1; then
-      echo "Issue already exists: ${TITLE} — skipping"
-      exit 0
-    fi
-
-    cat <<EOF > issue_body.md
-    ## Terraform Plan Summary
-
-    **Environment:** \`${{ inputs.environment }}\`
-    **Commit Hash:** ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
-    **Triggered by:** @${{ github.actor }}
-    **Workflow Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-    ### Plan Output
-    \`\`\`
-    $(terraform show tfplan.binary)
-    \`\`\`
-    EOF
-
-    gh issue create \
-      --title "${TITLE}" \
-      --body-file issue_body.md \
-      --label "terraform-drift"
-```
 :::
 ::::
-
 
 ### 設計上の工夫
 
@@ -426,39 +383,12 @@ gh issue list --state open --label "terraform-drift" --limit 100 --json title \
 
 ## 運用に向けて
 
-### スケジュール実行の追加
+- 本番運用では`schedule`トリガーを追加して定期実行すると良い。
+  - `pull_request`や`push`のイベント駆動よりは、アドホック実行の方が運用しやすいイメージを持っている
+- `gh diff`と`terraform plan`の結果を照合して「意図しない変更がplanに含まれるかどうか」を評価する
+  - 自身で実装するのはちょっと辛いが、生成AIモデルにお任せする方針で試してみる
 
-現在は`workflow_dispatch`（手動実行）だが、本番運用では`schedule`トリガーを追加して定期実行する。
+ドリフト検知の仕組み自体はシンプルだが、**OIDC認証の構築**、**終了コードのハンドリング**、**Issue重複防止のロジック**など、実際に動かすまでのTipsはそれなりに多い。
 
-```yaml
-on:
-  schedule:
-    - cron: '0 0 * * 1'  # 毎週月曜 00:00 UTC (09:00 JST)
-  workflow_dispatch:
-    inputs:
-      environment:
-        required: true
-        description: '実行対象の環境名'
-```
+仕組みだけで問題は（根本的には）解決しないので、自動化で空いた時間を開発サイクルの品質に充てることが出来るといい :tea:
 
-頻度はチームの運用に合わせて調整する。ドリフトの発生頻度が高い初期は毎日、安定してきたら週次にするなど段階的に緩めていくのが現実的。
-
-### PR連動のPlan実行（将来拡張）
-
-ドリフト検知とは別に、PRトリガーでPlan結果をPRコメントに投稿する拡張も考えられる。ワークフローの`on`トリガーと`detect-changes`ジョブを有効にし、matrixストラテジーで変更のあったディレクトリだけを対象にすれば効率的に回せる。
-
-## まとめ
-
-| 項目 | 採用した手段 |
-|:---|:---|
-| AWS認証 | GitHub Actions OIDC（長期クレデンシャル不要） |
-| ドリフト検知 | `terraform plan -detailed-exitcode`（exit code 2） |
-| 通知 | `gh issue create`でGitHub Issue自動作成 |
-| 冪等性 | State Serial + 既存Issue検索で重複防止 |
-| 環境分離 | `backend.hcl` + `terraform.tfvars` + `locals`マップ |
-
-ドリフト検知の仕組み自体はシンプルだが、**OIDC認証の構築**、**終了コードのハンドリング**、**Issue重複防止のロジック**など、実際に動かすまでに細かいハマりどころがある。
-
-特に`terraform_wrapper: false`を忘れて終了コードが取れない問題や、`set +e`の切り替えタイミングは、ドキュメントだけでは気づきにくいポイントだった。
-
-この仕組みをベースに、Slack通知の追加やPR連動のPlan実行など、チームの運用フローに合わせて拡張していく予定。
