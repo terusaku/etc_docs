@@ -1,6 +1,5 @@
 ---
 title: "terraform planとgit diffの整合性チェック(by Claude)をGitHub Issueに埋め込む"
-emoji: "🤖"
 type: "tech"
 topics: ["terraform", "githubactions", "aws", "bedrock", "claude"]
 published: true
