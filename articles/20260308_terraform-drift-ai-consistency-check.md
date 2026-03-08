@@ -13,7 +13,7 @@ published_at: 2026-03-13 12:00
 
 > `gh diff`と`terraform plan`の結果を照合して「意図しない変更がplanに含まれるかどうか」を評価する
 
-今回は¥`terraform plan`の出力と`git diff`の内容をAWS Bedrock上のClaude Sonnet 4.6に渡し、整合性チェックの結果をIssue本文に自動で埋め込む方法を試したら、それなりに実用性の高いものができた。
+今回は`terraform plan`の出力と`git diff`の内容をAWS Bedrock上のClaude Sonnet 4.6に渡し、整合性チェックの結果をIssue本文に自動で埋め込む方法を試したら、それなりに実用性の高いものができた。
 
 ![](/images/terraform-drift_ai-check.png)
 
@@ -105,12 +105,6 @@ planやdiffの取得、それらをユーザプロンプトに含めるのはそ
     else
       AI_EVALUATION="(Bedrock API 呼び出しに失敗しました。IAM権限またはモデルアクセス設定を確認してください。)"
     fi
-
-    {
-      echo "evaluation<<AI_EVAL_EOF"
-      echo "$AI_EVALUATION"
-      echo "AI_EVAL_EOF"
-    } >> $GITHUB_OUTPUT
 ```
 
 ### 実装上のポイント
