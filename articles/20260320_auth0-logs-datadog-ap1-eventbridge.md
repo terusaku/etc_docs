@@ -7,12 +7,12 @@ published: true
 published_at: "2026-03-21 09:00"
 ---
 
-## 今回の動機
+## 背景
 https://support.auth0.com/center/s/article/Datadog-Log-Stream-Integration-for-Japan
 
-Datadog AP1サイト(日本リージョン)を使っている場合、Auth0のLog StreamもDatadog AP1に設定できれば良いのですが、2026年3月時点では未対応で、先日、私は絶望したことがきっかけです。
+Datadog AP1サイト(日本リージョン)を使っている場合、Auth0のLog StreamもDatadog AP1に設定できれば良いのですが、2026年3月時点では未対応で、先日、私はショックを受けてました。
 
-上記URLの通り、Auth0公式のサポートセンターでも「US/EUリージョンのみ対応」との記載があり、ワークアラウンドも提示されていない状態でした。
+上記URLの通り、Auth0公式のサポートセンターでも「US/EUリージョンのみ対応」との記載があり、ワークアラウンドも提示されていない状態です。
 
 この記事では、そのワークアラウンドを考えたら何とかなったので、その構成と必要情報をまとめておきます。
 
@@ -48,7 +48,7 @@ https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-api-destinations.htm
 ### モジュール呼び出し例
 - EventBridgeのルールとターゲットを作成するTerraformモジュール
   - Auth0テナントごとにルールとターゲットを作成する
-- `connection_arn`はAPI送信先（Datadog AP1）の接続情報を設定するため、AWSコンソールから手動作成する前提
+- `connection_arn`はAPI送信先（Datadog AP1）の接続情報を設定するため、シークレット情報を含むのでAWSコンソールから手動作成している
   - `DD-API-KEY`をカスタムヘッダとして、送信先のAPI Keyを指定する（`DD-API-KEY`は自動的にSecretsManager管理となる）
 - API Destinationは環境に1つあれば良いので、最初のユースケースで作成し、以降は出力を使い回す
 
@@ -102,8 +102,18 @@ https://docs.datadoghq.com/ja/api/latest/logs/?site=ap1
 - Auth0テナント毎に作成されるEvent Bus: 長期ログ保存用とDatadog用、両方のルールを並行稼働させる
   - 長期ログ保存（ログ分析、監査）: EventBridge Rule -> DataFirehose -> S3
   - Datadog（モニタリング）: EventBridge Rule -> API Destination -> Datadog Logs
+- Auth0ログ欠損リスク
+  - リトライやDLQの設定をAWS側で行う
+  - `invocation_rate_limit_per_second`: Datadog Logs APIのレート制限以内に収める必要あり..と思っていたら、ログ送信APIのレート制限は無いらしい（執筆時点）。驚きの仕様。
+
+ref.) API レート制限ポリシーについて
+https://docs.datadoghq.com/ja/api/latest/rate-limits/¥
+> Datadog は、データポイント/メトリクスの送信に対してレート制限を設けていません (メトリクスの送信レートの処理方法については、メトリクスのセクションを参照してください)。制限に達したかどうかは、お客様の契約に基づくカスタムメトリクスの数量によって決まります。
+> - ログを送信する API はレート制限されていません。
+> - イベント送信のレート制限は、組織ごとに 1 時間あたり 500,000 イベントです。
+> - エンドポイントのレート制限は様々で、以下に詳述するヘッダーに含まれています。これらはオンデマンドで拡張することができます。
 
 
 ## まとめ
 Auth0が公式対応してくれるまでのワークアラウンド記録ですが、昨今の円安情勢を考えると、Datadog AP1サイト対応はされないかもしれないな...と感じています。
-ただ、ワークアラウンド自体はAuth0サポートナレッジにしてもいい気がしているため、コミュニティにも投稿してみました。
+ただ、ワークアラウンド自体はAuth0 Knowledge Baseにあっても良い気がしているため、フィードバックだけしときました✔️
