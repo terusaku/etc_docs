@@ -97,9 +97,12 @@ ref.) Datadog Logs HTTP Intake API
 https://docs.datadoghq.com/ja/api/latest/logs/?site=ap1
 
 ## 設計上の考慮点
-- API DestinationとIAMロールの共有: 環境毎（Datadog送信先毎）に1つあれば良いので、モジュール化しても重複して作成しないように共用する
-- Auth0 Log Stream設定: テナント側では、EventBridgeに対するのLog Streamのみあれば良い
-- Auth0テナント毎に作成されるEvent Bus: 長期ログ保存用とDatadog用、両方のルールを並行稼働させる
+- API DestinationとIAMロールの共有
+  - 環境毎（Datadog送信先毎）に1つあれば良いので、terraformでモジュール化しても重複して作成しないように共用する
+- Auth0 Log Stream設定
+  - テナント側では、EventBridgeに対するLog StreamのみあればOK
+- Auth0テナント毎に作成されるEvent Bus
+  - 長期ログ保存用とDatadog用、両方のルールを並行稼働させる（Busは1つでも複数ルールにイベントデータは流れる）
   - 長期ログ保存（ログ分析、監査）: EventBridge Rule -> DataFirehose -> S3
   - Datadog（モニタリング）: EventBridge Rule -> API Destination -> Datadog Logs
 - Auth0ログ欠損リスク
